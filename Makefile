@@ -11,14 +11,27 @@ cleanall:
 platypus: Dockerfile.platypus
 	docker build -t platypus -f Dockerfile.platypus .
 	docker run -v $(PWD)/build:/build:z platypus bash -c 'cp -r /nexus-platypus/platypus/target/* /build'
-	echo '==> platypus-nexus plugin build complete'
+	@echo '==> platypus-nexus plugin build complete'
 
 plugin: Dockerfile.plugin
 	(cd build/ &&\
 	rm -f Dockerfile &&\
 	cp ../Dockerfile.plugin Dockerfile &&\
 	docker build -t scp-nexus .)
-	echo '==> scp-nexus image build complete'
+	@echo '==> scp-nexus image build complete'
+
+launch:
+	@echo '=> launching queue'
+	docker run -dp 80:80 --name queue nginx
+	@echo '=> launching scp-nexus'
+	docker run -dp 8081:8081 --name nexus --link queue scp-nexus
+	@echo '=> launch done'
+
+stopclean:
+	@echo '=> stopping and cleaning up'
+	docker stop nexus queue
+	docker rm nexus queue
+	@echo '=> cleanup done'
 
 build:
 	mkdir -p build
