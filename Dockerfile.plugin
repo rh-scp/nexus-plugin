@@ -1,0 +1,21 @@
+FROM sonatype/nexus:oss
+MAINTAINER Pavel Odvody <podvody@redhat.com>
+
+USER root
+
+ENV VERSION='1.0-SNAPSHOT'
+
+RUN yum install -y unzip \
+ && yum clean all
+
+ADD platypus-nexus-plugin-${VERSION}-bundle.zip /tmp/platypus-nexus-plugin-${VERSION}-bundle.zip
+
+RUN unzip -d /opt/sonatype/nexus/nexus/WEB-INF/plugin-repository \
+    /tmp/platypus-nexus-plugin-${VERSION}-bundle.zip \
+ && ls -la /opt/sonatype/nexus/nexus/WEB-INF/plugin-repository/ \
+ && find /opt/sonatype/nexus/nexus/WEB-INF/plugin-repository/platypus-nexus-plugin-${VERSION} \
+    -type d -exec chmod 755 {} \; \
+  && find /opt/sonatype/nexus/nexus/WEB-INF/plugin-repository/platypus-nexus-plugin-${VERSION} \
+    -type f -exec chmod 644 {} \;
+
+USER nexus

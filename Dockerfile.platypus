@@ -1,0 +1,9 @@
+FROM centos:7
+MAINTAINER Pavel Odvody <podvody@redhat.com>
+
+RUN yum -y install git maven\
+ && yum clean all -y
+
+ADD . /nexus-platypus/
+# git clone https://github.com/nexus-platypus/
+RUN (cd /nexus-platypus && mvn clean install)
