@@ -10,8 +10,10 @@ cleanall:
 
 platypus: Dockerfile.platypus
 	docker build -t platypus -f Dockerfile.platypus .
-	docker run -v $(PWD)/build:/build:z platypus bash -c 'cp -r /nexus-platypus/platypus/target/* /build'
-	@echo '==> platypus-nexus plugin build complete'
+	@echo '==> platypus-nexus plugin build complete, pulling artefacts'
+	docker run -v $(PWD)/build:/build:z --rm platypus bash -c \
+		'cp -r /nexus-platypus/platypus/target/* /build && chown -R 1000:1000 /build'
+	@echo '==> artefacts pull done'
 
 plugin: Dockerfile.plugin
 	(cd build/ &&\
