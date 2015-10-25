@@ -38,8 +38,13 @@ stopclean:
 build:
 	mkdir -p build
 
+queue:
+	@echo '==> getting queue'
+	docker pull nginx
+
 all:
 	$(MAKE) build
 	$(MAKE) platypus
 	$(MAKE) plugin
+	$(MAKE) queue
 	echo '==> image build complete!'
